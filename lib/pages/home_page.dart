@@ -17,30 +17,33 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text('美好人间'),
         ),
-        body: Container(
-          // height: 100.0,
-          child: Column(
-            children: <Widget>[
-              // TextField Widget的基本使用
-              TextField(
-                controller: typeController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10.0),
-                  labelText: '美女类型',
-                  helperText: '请输入你喜欢的类型',
+        // 一个可滚动的widget.没有组件实体。
+        body: SingleChildScrollView(
+          child: Container(
+            // height: 100.0,
+            child: Column(
+              children: <Widget>[
+                // TextField Widget的基本使用
+                TextField(
+                  controller: typeController,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    labelText: '美女类型',
+                    helperText: '请输入你喜欢的类型',
+                  ),
+                  autofocus: false,
                 ),
-                autofocus: false,
-              ),
-              RaisedButton(
-                onPressed: _choiceAction,
-                child: Text('选择完毕'),
-              ),
-              Text(
-                showText,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-            ],
+                RaisedButton(
+                  onPressed: _choiceAction,
+                  child: Text('选择完毕'),
+                ),
+                Text(
+                  showText,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -65,8 +68,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
-  // 返回一个Future，支持一个等待回调方法 then 
+  // 返回一个Future，支持一个等待回调方法 then
   Future getHttp(String typeText) async {
     try {
       Response response;
@@ -81,4 +83,20 @@ class _HomePageState extends State<HomePage> {
       return print(e);
     }
   }
+
+  // // 返回一个Future，支持一个等待回调方法 then
+  // Future getHttp(String typeText) async {
+  //   try {
+  //     Response response;
+  //     var data = {'name': typeText};
+  //     response = await Dio().post(
+  //       "https://www.easy-mock.com/mock/5caae160c41e561afc30ba47/example/dabaojian",
+  //       queryParameters: data,
+  //     );
+  //     print(response.data);
+  //     return response.data;
+  //   } catch (e) {
+  //     return print(e);
+  //   }
+  // }
 }
