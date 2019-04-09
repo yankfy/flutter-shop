@@ -52,6 +52,10 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// flutter_Swiper 组件的简单使用方法
+// FlutterBuilder 解决异步渲染的问题
+
+
 class SwiperDiy extends StatelessWidget {
   final List swiperDataList;
   SwiperDiy({Key key, this.swiperDataList}) : super(key: key);
