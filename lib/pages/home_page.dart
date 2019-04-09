@@ -38,9 +38,17 @@ class _HomePageState extends State<HomePage> {
             var data = json.decode(snapshot.data.toString());
             // 顶部轮播组件数
             List<dynamic> swiperDataList = (data['data']['slides'] as List);
+            print((data['data']['category'] as List));
+            // List<Map> navigatorList =
+            //     (data['data']['category'] as List).cast(); //类别列表
+            List<dynamic> navigatorList =
+                data['data']['category'] as List; //类
+            print((data['data']['category'] as List).cast());
+
             return Column(
               children: <Widget>[
                 SwiperDiy(swiperDataList: swiperDataList), // 页面顶部swiper组件
+                TopNavigator(navigatorList: navigatorList),
               ],
             );
           } else {
@@ -100,3 +108,49 @@ class SwiperDiy extends StatelessWidget {
     );
   }
 }
+
+// 首页导航组件
+class TopNavigator extends StatelessWidget {
+  final List navigatorList;
+  TopNavigator({Key key, this.navigatorList}) : super(key: key);
+
+  Widget _gridViewItemUI(BuildContext context, item) {
+    return InkWell(
+      onTap: () {
+        print('点击了导航');
+      },
+      child: Column(
+        children: <Widget>[
+          Image.network(item['image'], width: ScreenUtil().setWidth(95)),
+          Text(item['mallCategoryName']),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 超过10个的List部分进行截掉
+    if (navigatorList.length > 10) {
+      navigatorList.removeRange(10, navigatorList.length);
+    }
+    return Container(
+      color: Colors.white,
+      margin: EdgeInsets.only(top: 5.0),
+      height: ScreenUtil().setHeight(320),
+      padding: EdgeInsets.all(3.0),
+      child: GridView.count(
+        physics: NeverScrollableScrollPhysics(),
+        crossAxisCount: 5,
+        padding: EdgeInsets.all(5.0),
+        // children 属性，使用了map循环，再使用toList()进行转换。
+        children: navigatorList.map((item) {
+          return _gridViewItemUI(context, item);
+        }).toList(),
+      ),
+    );
+  }
+}
+
+
+// 
