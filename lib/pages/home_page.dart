@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import './../service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -41,14 +43,22 @@ class _HomePageState extends State<HomePage> {
             print((data['data']['category'] as List));
             // List<Map> navigatorList =
             //     (data['data']['category'] as List).cast(); //类别列表
-            List<dynamic> navigatorList =
-                data['data']['category'] as List; //类
+            List<dynamic> navigatorList = data['data']['category'] as List; //类
             print((data['data']['category'] as List).cast());
+
+            String leaderImage = data['data']['shopInfo']['leaderImage'];
+            String leaderPhone = data['data']['shopInfo']['leaderPhone'];
+
+            // AdBanner数据获取
+            String advertesPciture =
+                data['data']['advertesPicture']['PICTURE_ADDRESS'];
 
             return Column(
               children: <Widget>[
                 SwiperDiy(swiperDataList: swiperDataList), // 页面顶部swiper组件
                 TopNavigator(navigatorList: navigatorList),
+                AdBanner(advertesPicture: advertesPciture),
+                LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
               ],
             );
           } else {
@@ -152,5 +162,43 @@ class TopNavigator extends StatelessWidget {
   }
 }
 
+// AdBanner 组件
+class AdBanner extends StatelessWidget {
+  final String advertesPicture;
 
-// 
+  AdBanner({Key key, this.advertesPicture}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Image.network(advertesPicture),
+    );
+  }
+}
+
+// 使用 url_launch 插件进行打开网页和拨打电话的设置
+class LeaderPhone extends StatelessWidget {
+  final String leaderImage; // 店长图片
+  final String leaderPhone; // 店长电话
+
+  LeaderPhone({Key key, this.leaderImage, this.leaderPhone}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: InkWell(
+        onTap: _launchURL,
+        child: Image.network(leaderImage),
+      ),
+    );
+  }
+
+  void _launchURL() async {
+    String url = 'tel:' + leaderPhone;
+    if(await canLaunch(url)){
+      await launch(url);
+    }else{
+      throw 'Could not launch $url';
+    }
+  }
+}
