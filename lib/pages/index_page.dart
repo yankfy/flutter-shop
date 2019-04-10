@@ -11,29 +11,31 @@ class IndexPage extends StatefulWidget {
 }
 
 class _IndexPageState extends State<IndexPage> {
-  // 声明一个BottomNavigationBarItem 类型的List,并设置文字和图标
+  PageController _pageController;
 
-  List<BottomNavigationBarItem> get bottomTabs => [
-        BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.home),
-          title: Text('首页'),
-        ),
-        BottomNavigationBarItem(
-          title: Text('分类'),
-          icon: Icon(CupertinoIcons.search),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.shopping_cart),
-          title: Text('购物车'),
-        ),
-        BottomNavigationBarItem(
-          title: Text('会员'),
-          icon: Icon(CupertinoIcons.profile_circled),
-        ),
-      ];
+  // 声明一个BottomNavigationBarItem 类型的List,并设置文字和图标
+  // List<BottomNavigationBarItem> get bottomTabs => [
+  final List<BottomNavigationBarItem> bottomTabs = [
+    BottomNavigationBarItem(
+      icon: Icon(CupertinoIcons.home),
+      title: Text('首页'),
+    ),
+    BottomNavigationBarItem(
+      title: Text('分类'),
+      icon: Icon(CupertinoIcons.search),
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(CupertinoIcons.shopping_cart),
+      title: Text('购物车'),
+    ),
+    BottomNavigationBarItem(
+      title: Text('会员'),
+      icon: Icon(CupertinoIcons.profile_circled),
+    ),
+  ];
 
   // 切换页面类
-  final List tabBodies = [
+  final List<Widget> tabBodies = [
     HomePage(),
     CartPage(),
     CategoryPage(),
@@ -47,6 +49,15 @@ class _IndexPageState extends State<IndexPage> {
   @override
   void initState() {
     currentPage = tabBodies[currentIndex];
+
+    _pageController = new PageController()..addListener(() {
+        if (currentPage != _pageController.page.round()) {
+          setState(() {
+            currentPage = _pageController.page.round();
+          });
+        }
+      });
+
     super.initState();
   }
 
@@ -66,7 +77,8 @@ class _IndexPageState extends State<IndexPage> {
           });
         },
       ),
-      body: currentPage,
+      // 这里的body children 为总共要展示的地方
+      body: IndexedStack(index: currentIndex, children: tabBodies),
     );
   }
 }
