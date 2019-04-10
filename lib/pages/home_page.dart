@@ -53,13 +53,22 @@ class _HomePageState extends State<HomePage> {
             String advertesPciture =
                 data['data']['advertesPicture']['PICTURE_ADDRESS'];
 
-            return Column(
-              children: <Widget>[
-                SwiperDiy(swiperDataList: swiperDataList), // 页面顶部swiper组件
-                TopNavigator(navigatorList: navigatorList),
-                AdBanner(advertesPicture: advertesPciture),
-                LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
-              ],
+            List<Map> recommendList =
+                (data['data']['recommend'] as List).cast();
+
+            // 超过边界的处理方法
+
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SwiperDiy(swiperDataList: swiperDataList), // 页面顶部swiper组件
+                  TopNavigator(navigatorList: navigatorList),
+                  AdBanner(advertesPicture: advertesPciture),
+                  LeaderPhone(
+                      leaderImage: leaderImage, leaderPhone: leaderPhone),
+                  Recommend(recommendList: recommendList),
+                ],
+              ),
             );
           } else {
             return Center(
@@ -195,10 +204,86 @@ class LeaderPhone extends StatelessWidget {
 
   void _launchURL() async {
     String url = 'tel:' + leaderPhone;
-    if(await canLaunch(url)){
+    if (await canLaunch(url)) {
       await launch(url);
-    }else{
+    } else {
       throw 'Could not launch $url';
     }
+  }
+}
+
+class Recommend extends StatelessWidget {
+  final List recommendList;
+  Recommend({Key key, this.recommendList}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: <Widget>[_titleWidget(), _recommendList()],
+        ),
+        height: ScreenUtil().setHeight(330),
+        margin: EdgeInsets.only(top: 10.0),
+      ),
+    );
+  }
+
+  //推荐商品标题项
+  Widget _titleWidget() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.fromLTRB(10.0, 2.0, 0, 5.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(width: 1.0, color: Colors.black12)),
+      ),
+      child: Text(
+        '商品推荐',
+        style: TextStyle(color: Colors.pink),
+      ),
+    );
+  }
+
+  // 商品单独项
+  Widget _item(index) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        height: ScreenUtil().setHeight(280),
+        width: ScreenUtil().setWidth(250),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            left: BorderSide(width: 1.0, color: Colors.black12),
+          ),
+        ),
+        child: Column(
+          children: <Widget>[
+            Image.network(recommendList[index]['image']),
+            Text('￥${recommendList[index]['mailPrice']}'),
+            Text(
+              '￥${recommendList[index]['price']}',
+              style: TextStyle(
+                  decoration: TextDecoration.lineThrough, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 横向列表组件
+  Widget _recommendList() {
+    return Container(
+      height: ScreenUtil().setHeight(280),
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: recommendList.length,
+          itemBuilder: (context, index) {
+            return _item(index);
+          }),
+    );
   }
 }
